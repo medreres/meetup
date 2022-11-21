@@ -40,6 +40,7 @@ export async function getStaticProps(context) {
         id: meetup._id.toString(),
       })),
     },
+    revalidate: 1
   };
 }
 
