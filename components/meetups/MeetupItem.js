@@ -20,6 +20,7 @@ function MeetupItem(props) {
         </div>
         <div className={classes.actions}>
           <button onClick={clickHandler} >Show Details</button>
+          {/* <Link href={`/${props.id}`}>Click</Link> */}
         </div>
       </Card>
     </li>
