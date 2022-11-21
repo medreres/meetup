@@ -1,27 +1,5 @@
+import { MongoClient } from "mongodb";
 import MeetupList from "../components/meetups/MeetupList";
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// const MEETUPS = [
-//       {
-//         id: "m1",
-//         title: "A First Meetup",
-//         image:
-//           "https://upload.wikimedia.org/wikipedia/commons/d/d3/Stadtbild_M%C3%BCnchen.jpg",
-//         address: "Shelestovych, 8",
-//         description: "meetiup",
-//       },
-//       {
-//         id: "m2",
-//         title: "A Second Meetup",
-//         image:
-//           "https://upload.wikimedia.org/wikipedia/commons/d/d3/Stadtbild_M%C3%BCnchen.jpg",
-//         address: "Shelestovych, 8",
-//         description: "meetiup",
-//       },
-//     ];
 
 const HomePage = (props) => {
   return (
@@ -31,53 +9,29 @@ const HomePage = (props) => {
   );
 };
 
-
-// cache result
 export async function getStaticProps(context) {
-//  await  sleep(5000);
-//  console.log('loaded')
-  const MEETUPS = [
-    {
-      id: "m1",
-      title: "A First Meetup",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d3/Stadtbild_M%C3%BCnchen.jpg",
-      address: "Shelestovych, 8",
-      description: "meetiup",
-    },
-    {
-      id: "m2",
-      title: "A Second Meetup",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/d/d3/Stadtbild_M%C3%BCnchen.jpg",
-      address: "Shelestovych, 8",
-      description: "meetiup",
-    },
-  ];
+  const client = await MongoClient.connect(
+    "mongodb+srv://admin:admin@cluster0.75s2iog.mongodb.net/meetups?retryWrites=true&w=majority"
+  );
+
+  const db = client.db();
+
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find().toArray();
+
+  client.close();
+
   return {
     props: {
-      meetups: MEETUPS,
+      meetups: meetups.map(meetup => ({
+        title: meetup.title,
+        address: meetup.address,
+        image: meetup.image,
+        id: meetup._id.toString()
+      }) ),
     },
   };
 }
-
-// export async function getServerSideProps(context) {
-//   const req = context.req;
-//   const res = context.res;
-
-
-//   // wait for response
-//   await sleep(5000);
-//   // then load the page
-//   console.log('lol')
-  
-//   // fetch data from an api
-  
-//   return {
-//     props: {
-//       meetups: MEETUPS
-//     }
-//   }
-// }
 
 export default HomePage;
